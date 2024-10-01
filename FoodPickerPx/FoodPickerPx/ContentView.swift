@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     let food = Food.examples;
     @State private var selectFood: Food?  // 涉及到状态的修改 需要加上@State
+    @State private var showInfo: Bool = false
     
     var body: some View {
         VStack(
@@ -37,29 +38,35 @@ struct ContentView: View {
                         .font(.largeTitle)
                         .bold().foregroundColor(.green)
                     
-                    Image(systemName: "info.circle.fill")
-                        .font(.largeTitle.weight(.black)).foregroundColor(.secondary)
+                    Button(action: {
+                        showInfo = !showInfo
+                    }, label: {
+                        Image(systemName: "info.circle.fill")
+                            .font(.largeTitle.weight(.black)).foregroundColor(.secondary)
+                    })
                 }
                 
                 Text("热量 \(selectFood!.calorie.formatted()) 大卡")
                 
-                HStack{
-                    VStack(spacing: 12) {
-                        Text("蛋白质")
-                        Text(selectFood!.protein.formatted() + " g")
-                    }
-                    Divider().padding(.horizontal)
-                    VStack(spacing: 12) {
-                        Text("脂肪")
-                        Text(selectFood!.fat.formatted() + " g")
-                    }
-                    Divider().padding(.horizontal)
-                    VStack(spacing: 12) {
-                        Text("碳水")
-                        Text(selectFood!.carb.formatted() + " g")
-                    }
-                }.padding()
-                    .background(RoundedRectangle(cornerRadius: 8).foregroundColor(Color(.secondarySystemBackground))).frame(height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/)
+                if showInfo {
+                    HStack{
+                        VStack(spacing: 12) {
+                            Text("蛋白质")
+                            Text(selectFood!.protein.formatted() + " g")
+                        }
+                        Divider().padding(.horizontal)
+                        VStack(spacing: 12) {
+                            Text("脂肪")
+                            Text(selectFood!.fat.formatted() + " g")
+                        }
+                        Divider().padding(.horizontal)
+                        VStack(spacing: 12) {
+                            Text("碳水")
+                            Text(selectFood!.carb.formatted() + " g")
+                        }
+                    }.padding()
+                        .background(RoundedRectangle(cornerRadius: 8).foregroundColor(Color(.secondarySystemBackground))).frame(height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/)
+                }
             }
             
             // Color.clear
@@ -87,7 +94,7 @@ struct ContentView: View {
                 .buttonStyle(.bordered)
                 .tint(.cyan)
             }
-        }.animation(.easeIn(duration: 0.5),value: selectFood)
+        }.animation(.easeIn(duration: 0.5),value: selectFood).animation(.easeIn, value: showInfo)
     }
 }
 
