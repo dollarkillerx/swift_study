@@ -8,40 +8,55 @@
 import SwiftUI
 
 struct ContentView: View {
-    let food = [
-        "ハンバーガー",
-        "サラダ",
-        "ピザ",
-        "スパゲティー",
-        "チキン弁当",
-        "刀削麺",
-        "火鍋",
-        "ビーフラードルスープ",
-        "関東炊き"
-    ]
-    
-    @State private var selectFood: String?  // 涉及到状态的修改 需要加上@State
+    let food = Food.examples;
+    @State private var selectFood: Food?  // 涉及到状态的修改 需要加上@State
     
     var body: some View {
         VStack(
             spacing: 30
         ) {
-            Image("dinner")
-                .resizable()
-                .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/).frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/,height: 100)
-                
+            Group {
+                if selectFood == .none {
+                    Image("dinner")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                }else{
+                    Text(selectFood!.image)
+                        .font(.system(size: 200))
+                        .minimumScaleFactor(0.7)
+                        
+                }
+            }.frame(height: 250)
+            
+            // minimumScaleFactor 可以让这个元素放在这个空间内
             Text("今日何を食べたい").font(.title).bold()
             
             if selectFood != .none {
-                Text(selectFood ?? "")
-                    .font(.largeTitle)
-                    .bold().foregroundColor(.green)
+                HStack {
+                    Text(selectFood?.name ?? "")
+                        .font(.largeTitle)
+                        .bold().foregroundColor(.green)
+                    
+                    Image(systemName: "info.circle.fill")
+                        .font(.largeTitle.weight(.black)).foregroundColor(.secondary)
+                }
+                
+                Text("热量 \(selectFood!.calorie.formatted()) 大卡")
+                
+                HStack{
+                    Text("蛋白质 \n")
+                }
             }
+            
+            // Color.clear
+            // Spacer()
             
             Button(action: {
                 selectFood = food.shuffled().first{$0 != selectFood}
             }, label: {
-                Text(selectFood == .none ? "教えて" : "换一个").frame(width: 200, alignment: .center)
+                Text(selectFood == .none ? "教えて" : "换一个")
+                    .frame(width: 200, alignment: .center)
+                    .transition(.scale.combined(with: .slide))
             })
             .font(.title)
             .buttonStyle(.borderedProminent)
@@ -58,10 +73,16 @@ struct ContentView: View {
                 .buttonStyle(.bordered)
                 .tint(.cyan)
             }
-        }.animation(.easeIn,value: selectFood)
+        }.animation(.easeIn(duration: 0.5),value: selectFood)
+    }
+}
+
+extension ContentView {
+    init(selectFood: Food) {
+        _selectFood = State(wrappedValue: selectFood)
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(selectFood: .examples.first!)
 }
